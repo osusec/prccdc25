@@ -1,0 +1,19 @@
+---
+- name: Check Yama Linux Security Module is loadead
+  ansible.builtin.command: cat /sys/kernel/security/lsm
+  register: lsms_loaded
+  failed_when: "'yama' not in lsms_loaded.stdout"
+  changed_when: false
+
+- name: Set ptrace to no attach
+  ansible.builtin.lineinfile:
+    path: /etc/sysctl.conf
+    line: "kernel.yama.ptrace_scope = 3"
+    # 0644 on my desktop but an old STIG says 0600 or less
+    mode: "0600"
+    create: true
+    state: present
+
+- name: Reload sysctl.conf
+  ansible.builtin.command: sysctl -p /etc/sysctl.conf
+  changed_when: false

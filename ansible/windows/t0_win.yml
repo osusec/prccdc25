@@ -1,0 +1,24 @@
+#to run
+#ansible-playbook -i ansible/inventory.yaml ansible/windows/t0_win.yml
+- name: T0 Windows
+  hosts: windows
+
+- name: Disable Powershell2  
+  import_playbook: t0_win/disablePS2.yml
+
+- name: DNS Backup
+  import_playbook: t0_win/dnsBackup.yml
+
+- name: Eternal Blue Mitigation
+  import_playbook: t0_win/eternalBlue.yml
+
+- name: Firewall T0
+  import_playbook: t0_win/firewall.yml
+
+- name: Install Tools Only
+  import_playbook: t0_win/installToolsOnly.yml
+
+- name: Secure Machines
+  import_playbook: t0_win/gptsecureMachines.yml 
+
+

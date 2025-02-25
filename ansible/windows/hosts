@@ -1,0 +1,37 @@
+# Insert ungrouped hosts here
+
+[all:vars]
+ansible_ssh_private_key_file=
+
+[ubuntu] # Insert ubuntu hosts below
+
+[debian] # Insert debian hosts below
+
+[fedora] # Insert fedora hosts below
+
+[centos] # Insert centos hosts below
+
+[alpine] # Insert alpine hosts below
+
+[linux] # Insert linux hosts below
+
+[linux:children]
+ubuntu
+debian
+fedora
+centos
+alpine
+
+[linux:vars]
+ansible_user=root
+ansible_connection=ssh
+
+[windows] # Insert windows hosts below
+10.15.0.16
+
+[windows:vars]
+ansible_user=Administrator
+ansible_password=beaumont.1.mira.bangles.rages
+ansible_connection=winrm
+ansible_winrm_transport=ntlm
+ansible_port=5985

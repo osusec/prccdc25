@@ -1,0 +1,23 @@
+---
+
+- name: Set it Without the Builtin Module
+  ansible.builtin.command: "usermod --password {{ item[1] }} {{ item[0] }}"
+  changed_when: true
+
+# What the heck, dude? You have no idea. What the freak. Golly. It wanted to useradd.
+# I wanted to usermod. We couldn't meet in the middle on userdel.
+# - name: Set it
+#   ansible.builtin.user:
+#     user:
+#       name: "{{item[0]}}"
+#       password: "{{item[1] | string}}"
+#       update_password: always
+#       state: present
+
+- name: Do this for some reason
+  ansible.builtin.set_fact:
+    new_set: "{{ [item[0], item[2]] }}"
+
+- name: Remember it
+  ansible.builtin.set_fact:
+    changelog: "{{ changelog + new_set }}"

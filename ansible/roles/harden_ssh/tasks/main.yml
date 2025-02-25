@@ -1,0 +1,29 @@
+---
+- name: Ensure sshd configuration is correct
+  ansible.builtin.lineinfile:
+    path: "/etc/ssh/sshd_config"
+    regexp: "^(#)?{{item.key}}"
+    line: "{{item.key}} {{item.value}}"
+    state: present
+  loop:
+    - { key: "PermitRootLogin", value: "no" }
+    - { key: "PubkeyAuthentication", value: "yes" }
+    - { key: "PasswordAuthentication", value: "no" }
+    - { key: "PermitEmptyPasswords", value: "no" }
+    - { key: "AllowUsers", value: "root {{ ansible_user }}" }
+
+- name: Add public key to authorized_keys
+  ansible.builtin.authorized_key:
+    user: "{{ ansible_user }}"
+    state: present
+    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+- name: Append custom configuration to sshd_config
+  ansible.builtin.blockinfile:
+    path: "/etc/ssh/sshd_config"
+    block: |
+      Match User root,dcuser
+          PasswordAuthentication yes
+
+  notify:
+    - restart sshd

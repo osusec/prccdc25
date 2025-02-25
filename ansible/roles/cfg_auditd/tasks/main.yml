@@ -1,0 +1,70 @@
+---
+- name: Attempt to install Auditd
+  ansible.builtin.package:
+    name: auditd
+    state: present
+  register: auditd_result
+  ignore_errors: true
+
+- name: Otherwise install audit
+  ansible.builtin.package:
+    name: audit
+    state: present
+  when: auditd_result.failed
+  register: audit_result
+  ignore_errors: true
+
+- name: Fail playbook if neither install
+  ansible.builtin.fail:
+    msg: "Neither auditd nor audit could be installed. This is a weird distro, go install by hand when you can!"
+  when: auditd_result.failed and audit_result.failed
+
+- name: Create Auditd Rules Directory
+  ansible.builtin.file:
+    path: /etc/audit/rules.d/
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Backup Existing Audit Rules
+  ansible.builtin.copy:
+    src: /etc/audit/rules.d/audit.rules
+    dest: /etc/audit/old.rules
+    remote_src: true  # Because the source file is on the remote system
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Download New Audit Rules from GitHub
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/Neo23x0/auditd/master/audit.rules
+    dest: /etc/audit/rules.d/audit.rules
+    owner: root
+    group: root
+    mode: '0644'
+    force: true
+
+- name: Load New Audit Rules
+  ansible.builtin.command:
+    cmd: augenrules --load
+  register: augenrules
+  changed_when: augenrules.rc != 0
+
+- name: Log all excve b64 by root
+  ansible.builtin.command:
+    cmd: auditctl -a exit,always -F arch=b64 -F euid=0 -S execve
+  register: excve_root_64
+  changed_when: excve_root_64.rc != 0
+
+- name: Log all excve b32 by root
+  ansible.builtin.command:
+    cmd: auditctl -a exit,always -F arch=b32 -F euid=0 -S execve
+  register: excve_root_32
+  changed_when: excve_root_32.rc != 0
+
+- name: Start that thang (and by thang I mean the audit daemon)
+  ansible.builtin.service:
+    name: auditd
+    state: started
+    enabled: true

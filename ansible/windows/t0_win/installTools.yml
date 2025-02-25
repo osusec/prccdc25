@@ -1,0 +1,154 @@
+- name: Download, unzip, and optionally run Sysinternals tools on Windows
+  hosts: windows
+  gather_facts: no
+
+  tasks:
+    # Ensure the directory C:\Temp exists
+    - name: Ensure C:\Temp directory exists
+      ansible.builtin.win_file:
+        path: C:\Temp
+        state: directory
+
+    # Download and unzip Handle
+    - name: Download Handle.zip from the web
+      ansible.builtin.win_get_url:
+        url: https://download.sysinternals.com/files/Handle.zip
+        dest: C:\Temp\Handle.zip
+
+    - name: Unzip Handle.zip to C:\Temp
+      ansible.builtin.win_unzip:
+        src: C:\Temp\Handle.zip
+        dest: C:\Temp\Handle
+        creates: C:\Temp\Handle\handle.exe
+
+    # Download and unzip LogonSessions
+    - name: Download LogonSessions.zip from the web
+      ansible.builtin.win_get_url:
+        url: https://download.sysinternals.com/files/logonSessions.zip
+        dest: C:\Temp\logonSessions.zip
+
+    - name: Unzip LogonSessions.zip to C:\Temp
+      ansible.builtin.win_unzip:
+        src: C:\Temp\LogonSessions.zip
+        dest: C:\Temp\LogonSessions
+        creates: C:\Temp\LogonSessions\LogonSessions.exe
+
+    # Download and unzip ProcessExplorer
+    - name: Download ProcessExplorer.zip from the web
+      ansible.builtin.win_get_url:
+        url: https://download.sysinternals.com/files/ProcessExplorer.zip
+        dest: C:\Temp\ProcessExplorer.zip
+
+    - name: Unzip ProcessExplorer.zip to C:\Temp
+      ansible.builtin.win_unzip:
+        src: C:\Temp\ProcessExplorer.zip
+        dest: C:\Temp\ProcessExplorer
+        creates: C:\Temp\ProcessExplorer\procexp.exe
+
+    # Download and unzip ProcessMonitor
+    - name: Download ProcessMonitor.zip from the web
+      ansible.builtin.win_get_url:
+        url: https://download.sysinternals.com/files/ProcessMonitor.zip
+        dest: C:\Temp\ProcessMonitor.zip
+
+    - name: Unzip ProcessMonitor.zip to C:\Temp
+      ansible.builtin.win_unzip:
+        src: C:\Temp\ProcessMonitor.zip
+        dest: C:\Temp\ProcessMonitor
+        creates: C:\Temp\ProcessMonitor\Procmon.exe
+
+    # Download and unzip Sysmon
+    - name: Download Sysmon.zip from the web
+      ansible.builtin.win_get_url:
+        url: https://download.sysinternals.com/files/Sysmon.zip
+        dest: C:\Temp\Sysmon.zip
+
+    - name: Unzip Sysmon.zip to C:\Temp
+      ansible.builtin.win_unzip:
+        src: C:\Temp\Sysmon.zip
+        dest: C:\Temp\Sysmon
+        creates: C:\Temp\Sysmon\sysmon.exe
+
+    # Download and unzip TCPView
+    - name: Download TCPView.zip from the web
+      ansible.builtin.win_get_url:
+        url: https://download.sysinternals.com/files/TCPView.zip
+        dest: C:\Temp\TCPView.zip
+
+    - name: Unzip TCPView.zip to C:\Temp
+      ansible.builtin.win_unzip:
+        src: C:\Temp\TcpView.zip
+        dest: C:\Temp\TcpView
+        creates: C:\Temp\TcpView\tcpview.exe
+
+    # Download and unzip AccessEnum
+    - name: Download AccessEnum.zip from the web
+      ansible.builtin.win_get_url:
+        url: https://download.sysinternals.com/files/AccessEnum.zip
+        dest: C:\Temp\AccessEnum.zip
+
+    - name: Unzip AccessEnum.zip to C:\Temp
+      ansible.builtin.win_unzip:
+        src: C:\Temp\AccessEnum.zip
+        dest: C:\Temp\AccessEnum
+        creates: C:\Temp\AccessEnum\AccessEnum.exe
+
+    # Download and unzip Autoruns
+    - name: Download Autoruns.zip from the web
+      ansible.builtin.win_get_url:
+        url: https://download.sysinternals.com/files/Autoruns.zip
+        dest: C:\Temp\Autoruns.zip
+
+    - name: Unzip Autoruns.zip to C:\Temp
+      ansible.builtin.win_unzip:
+        src: C:\Temp\Autoruns.zip
+        dest: C:\Temp\Autoruns
+        creates: C:\Temp\Autoruns\Autoruns.exe
+
+    # Optional: Run Handle.exe
+    - name: Run Handle.exe
+      ansible.windows.win_command:
+        cmd: C:\Temp\Handle\handle.exe
+        creates: C:\Temp\Handle\handle.exe
+
+    # Optional: Run LogonSessions.exe
+    - name: Run LogonSessions.exe
+      ansible.windows.win_command:
+        cmd: C:\Temp\LogonSessions\LogonSessions.exe
+        creates: C:\Temp\LogonSessions\LogonSessions.exe
+
+    # Optional: Run ProcessExplorer.exe
+    - name: Run ProcessExplorer.exe
+      ansible.windows.win_command:
+        cmd: C:\Temp\ProcessExplorer\procexp.exe
+        creates: C:\Temp\ProcessExplorer\procexp.exe
+
+    # Optional: Run ProcessMonitor.exe
+    - name: Run ProcessMonitor.exe
+      ansible.windows.win_command:
+        cmd: C:\Temp\ProcessMonitor\Procmon.exe
+        creates: C:\Temp\ProcessMonitor\Procmon.exe
+
+    # Optional: Run Sysmon.exe
+    - name: Run Sysmon.exe
+      ansible.windows.win_command:
+        cmd: C:\Temp\Sysmon\sysmon.exe
+        creates: C:\Temp\Sysmon\sysmon.exe
+
+    # Optional: Run TcpView.exe
+    - name: Run TcpView.exe
+      ansible.windows.win_command:
+        cmd: C:\Temp\TcpView\tcpview.exe
+        creates: C:\Temp\TcpView\tcpview.exe
+
+    # Optional: Run AccessEnum.exe
+    - name: Run AccessEnum.exe
+      ansible.windows.win_command:
+        cmd: C:\Temp\AccessEnum\AccessEnum.exe
+        creates: C:\Temp\AccessEnum\AccessEnum.exe
+
+    # Optional: Run Autoruns.exe
+    - name: Run Autoruns.exe
+      ansible.windows.win_command:
+        cmd: C:\Temp\Autoruns\Autoruns.exe
+        creates: C:\Temp\Autoruns\Autoruns.exe

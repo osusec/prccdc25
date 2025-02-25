@@ -1,0 +1,37 @@
+---
+- name: Get users on system
+  ansible.builtin.getent:
+    database: passwd
+  register: passwd_entries
+
+- name: Cook up new passwords
+  ansible.builtin.command:
+    cmd: "python3 {{ role_path }}/files/generate_passwords.py {{ rotate_all_passwords_password_length }} {{ passwd_entries.ansible_facts.getent_passwd | length }}"
+  become: false # This is important, for some reason
+  changed_when: false
+  register: password_blob
+  connection: local
+  delegate_to: localhost
+
+  # This is absurd
+- name: Duplicate them
+  ansible.builtin.set_fact:
+    unhashed: "{{ password_blob.stdout_lines | list }}"
+
+- name: Hash them locally
+  ansible.builtin.set_fact:
+    password_blob: "{{ password_blob.stdout_lines | list | map('password_hash', 'sha512', rounds=5000) | list | zip(unhashed) }}"
+  become: false # This is important, for some reason
+  connection: local
+  delegate_to: localhost
+
+- name: Set and Record Password
+  ansible.builtin.include_tasks: inner.yml
+  loop: "{{ passwd_entries.ansible_facts.getent_passwd | list | zip(password_blob) | map('flatten') | list }}"
+  when:
+    - item[0] != "root"
+    - "passwd_entries.ansible_facts.getent_passwd[item[0]][5] != '/usr/sbin/nologin'"
+
+- name: Show raw changelog
+  ansible.builtin.debug:
+    var: changelog

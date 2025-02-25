@@ -1,0 +1,11 @@
+- name: Disable Powershell 2.0
+  hosts: windows
+  tasks: 
+  - name: Disable Powershell 2.0 Feature
+    ansible.windows.win_powershell:
+        script: |
+          Disable-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2
+  - name: Check Powershell 2.0 State
+    ansible.windows.win_powershell:
+        script: |
+          $feature = Get-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2

@@ -1,0 +1,36 @@
+---
+- name: Block incoming IPv6 traffic
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: ipv6
+    jump: REJECT
+    state: present
+    in_interface: any
+    source: "::/0"
+
+- name: Block outgoing IPv6 traffic
+  ansible.builtin.iptables:
+    chain: OUTPUT
+    protocol: ipv6
+    jump: REJECT
+    state: present
+    out_interface: any
+    source: "::/0"
+
+- name: Block forwarded IPv6 traffic
+  ansible.builtin.iptables:
+    chain: FORWARD
+    protocol: ipv6
+    jump: REJECT
+    state: present
+    source: "::/0"
+
+- name: Creates directory # just in case it doesn't exist
+  ansible.builtin.file:
+    path: /etc/iptables
+    state: directory
+
+- name: Save iptables rules to persist after reboot
+  community.general.iptables_state:
+    state: saved
+    path: /etc/iptables/rules.v4

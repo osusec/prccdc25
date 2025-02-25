@@ -1,0 +1,11 @@
+- name: DNS Backup
+  hosts: windows
+  tasks:
+    - name: Powershell DNS Backup
+      ansible.windows.win_powershell:
+        script: |
+            Export-DnsServerZone -Name [ccdc.lan] -FileName [ccdc.lan.bkp]
+    - name: msdcs Powershell DNS Backup
+      ansible.windows.win_powershell: 
+        script: |
+            Export-DnsServerZone -Name [_msdcs.ccdc.lan] -FileName [_msdcs.ccdc.lan.bkp]

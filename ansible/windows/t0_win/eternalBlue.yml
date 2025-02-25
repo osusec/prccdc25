@@ -1,0 +1,16 @@
+- name: Uninstall SMB1 Protocol
+  hosts: windows
+  tasks:
+  - name: Uninstall SMB1
+    ansible.windows.win_feature:
+      name: FS-SMB1
+      state: absent
+      register: smb1_status
+
+  - name: Reboot if SMB1 was removed
+    ansible.windows.win_reboot:
+      msg: "Rebooting after SMB1 removal"
+    when: smb1_status is defined and smb1_status.reboot_required
+
+
+

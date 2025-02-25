@@ -1,0 +1,13 @@
+shopt -s histappend
+export PROMPT_COMMAND="history -a"
+export HISTCONTROL=
+export HISTFILESIZE=5000
+export HISTIGNORE=
+export HISTTIMEFORMAT="%a %T "
+typeset -r PROMPT_COMMAND
+typeset -r HISTTIMEFORMAT
+typeset -r HISTCONTROL
+typeset -r HISTIGNORE
+typeset -r HISTFILE
+typeset -r HISTFILESIZE
+typeset -r HISTSIZE

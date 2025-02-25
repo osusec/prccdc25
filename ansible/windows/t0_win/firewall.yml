@@ -1,0 +1,16 @@
+- name: Firewall rule setup
+  hosts: windows
+  tasks:
+    - name: Disallow sus ports
+      community.windows.win_firewall_rule:
+        name: "Block Port {{ item }}"  # Unique name for each rule
+        localport: "{{ item }}"
+        action: block
+        direction: in
+        protocol: tcp
+        state: present
+        enabled: true
+      loop:
+        - 6666
+        - 6969
+        - 1337

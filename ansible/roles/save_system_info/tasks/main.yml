@@ -1,0 +1,24 @@
+---
+# I Stanfound an initial version of this somewhere else maybe
+- name: Create Backup Directory
+  ansible.builtin.file:
+    path: "{{ remote_backup_dir }}"
+    state: directory
+    mode: "770"
+
+- name: Save Selected Program Output
+  ansible.builtin.shell: "{{ item.program }} > /root/{{ item.file }}"
+  loop: "{{ save_program_outputs + more_save_program_outputs }}"
+  changed_when: true
+
+- name: Backup Desired Files
+  community.general.archive:
+    path: "{{ backup_paths + more_backup_paths }}"
+    dest: "{{ remote_backup_dir }}/{{ ansible_date_time['epoch'] }}.tar.gz"
+    exclude_path: "{{ remote_backup_dir }}"
+    mode: "660"
+
+- name: Retrieve Backups From Host
+  ansible.builtin.fetch:
+    src: "{{ remote_backup_dir }}/{{ ansible_date_time['epoch'] }}.tar.gz"
+    dest: "{{ host_files }}" # TODO: This gets dumped with obnoxious nesting

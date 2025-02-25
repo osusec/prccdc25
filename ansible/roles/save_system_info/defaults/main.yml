@@ -1,0 +1,17 @@
+backup_paths:
+  - "/etc/passwd"
+  - "/etc/group"
+  - "/home"
+  - "/root"
+save_program_outputs:
+  - { program: "lsmod", file: "kernel_modules" }
+  - { program: "last", file: "last_logins" }
+  - { program: "systemctl list-units", file: "systemd_units" }
+more_save_program_outputs: []
+# Can add more directories at runtime. MUST USE JSON LIST FORMAT
+# -e '{"more_backup_paths":["/etc/shadow","/etc/firewalld"]}'
+# or write to a file and reference it with -e @my_paths.json
+more_backup_paths: []
+
+remote_backup_dir: "/root/backup"
+host_files: "./backups"

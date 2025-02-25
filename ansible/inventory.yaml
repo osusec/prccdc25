@@ -1,0 +1,22 @@
+linux:
+  vars:
+    ansible_user:
+    ansible_ssh_pass: 
+    ansible_sudo_pass:
+  hosts:
+    hostname:
+      ansible_user:
+      ansible_ssh_pass:
+      ansible_sudo_pass:
+
+
+windows:
+  vars:
+    ansible_user:
+    ansible_password:
+    ansible_connection:
+    ansible_winrm_transport:
+    ansible_winrm_server_cert_validation:
+    ansible_port:
+  hosts:
+    hostname:
